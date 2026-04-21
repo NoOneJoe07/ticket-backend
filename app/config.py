@@ -10,14 +10,15 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret_key")
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev_jwt_secret")
 
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        "sqlite:///ticket_booking.db"  # fallback si .env absent
-    )
+    # Render fournit "postgres://" → SQLAlchemy exige "postgresql://"
+    database_url = os.getenv("DATABASE_URL", "sqlite:///ticket_booking.db")
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    SQLALCHEMY_DATABASE_URI = database_url
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # CORS (si tu veux restreindre plus tard)
+    # CORS
     CORS_HEADERS = "Content-Type"
 
 
@@ -27,3 +28,4 @@ class DevelopmentConfig(Config):
 
 class ProductionConfig(Config):
     DEBUG = False
+

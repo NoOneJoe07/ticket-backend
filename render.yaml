@@ -1,0 +1,32 @@
+databases:
+  - name: tickethub-db
+    plan: free
+    databaseName: tickethub_db
+    user: tickethub_user
+
+services:
+  - type: web
+    name: tickethub-api
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn run:app"
+    envVars:
+      - key: FLASK_APP
+        value: run.py
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tickethub-db
+          property: connectionURI
+      - key: CORS_ORIGINS
+        value: https://votre-frontend.onrender.com
+      - key: TALISMAN_FORCE_HTTPS
+        value: "true"
+      - key: PYTHON_VERSION
+        value: "3.10.0"
