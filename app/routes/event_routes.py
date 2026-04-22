@@ -58,14 +58,13 @@ def create_event(current_user):
 
 
 # ---------------------------------------------------------
-# GET ALL EVENTS (USER + ADMIN)
+# GET ALL EVENTS (PUBLIC)
 # ---------------------------------------------------------
 @event_bp.route("/", methods=["GET"])
-@token_required
-def get_events(current_user):
+def get_events():
     """
     Retourne tous les événements.
-    Accessible à tous les utilisateurs connectés.
+    Accessible publiquement.
     """
     events = Event.query.all()
     return jsonify({"events": [e.to_dict() for e in events]}), 200
@@ -136,26 +135,13 @@ def update_event(current_user, event_id):
 @admin_required
 def delete_event(current_user, event_id):
     """
-    Permet à un ADMIN de supprimer un événement.
-    - Vérifie que l'événement existe
-    - Empêche la suppression si des réservations existent
+    Supprime un événement (ADMIN uniquement)
     """
     event = Event.query.get(event_id)
-
     if not event:
         return jsonify({"error": "Event not found"}), 404
-
-    if len(event.bookings) > 0:
-        return jsonify({
-            "error": "Cannot delete event with existing bookings",
-            "current_bookings": len(event.bookings)
-        }), 400
 
     db.session.delete(event)
     db.session.commit()
 
-    return jsonify({
-        "message": "Event deleted successfully",
-        "event_id": event_id
-    }), 200
-
+    return jsonify({"message": "Event deleted successfully"}), 200
