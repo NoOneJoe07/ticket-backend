@@ -68,7 +68,7 @@ def get_events(current_user):
     Accessible à tous les utilisateurs connectés.
     """
     events = Event.query.all()
-    return jsonify([event.to_dict() for event in events]), 200
+    return jsonify({"events": [e.to_dict() for e in events]}), 200
 
 
 # ---------------------------------------------------------

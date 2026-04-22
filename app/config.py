@@ -11,7 +11,8 @@ class Config:
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev_jwt_secret")
 
     # Render fournit "postgres://" → SQLAlchemy exige "postgresql://"
-    database_url = os.getenv("DATABASE_URL", "sqlite:///ticket_booking.db")
+    database_url = os.getenv("DATABASE_URL", "sqlite:///instance/ticket_booking.db")
+
     if database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
     SQLALCHEMY_DATABASE_URI = database_url
